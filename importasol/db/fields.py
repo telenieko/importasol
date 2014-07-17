@@ -1,6 +1,7 @@
 import types
 from decimal import Decimal
 from datetime import date
+from ..exceptions import ValidationError, ProgrammingError
 
 
 class Campo(object):
@@ -17,7 +18,7 @@ class Campo(object):
         self.default = default
 
     def is_valid(self, obj, value):
-        pass
+        raise ProgrammingError("Hay que implementar is_valid!!")
 
     def get_valor(self, obj):
         """ Devolver el valor que debe almacenarse en la Salida """
@@ -41,6 +42,20 @@ class CampoA(Campo):
     def __init__(self, nombre, truncate=True, **kwargs):
         self.truncate = truncate
         return super(CampoA, self).__init__(nombre, **kwargs)
+
+    def is_valid(self, obj):
+        val = self.get_valor(obj)
+        if len(val) > self.size:
+            raise ValidationError("El texto es mayor de lo permitido y truncate=False")
+        return True
+
+    def get_valor(self, obj):
+        val = super(CampoA, self).get_valor(obj)
+        if self.truncate is not None and val:
+            return val[:self.size]
+        else:
+            return val
+            
 
 
 class CampoT(CampoA):

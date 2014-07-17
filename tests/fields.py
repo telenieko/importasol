@@ -9,6 +9,8 @@ class TestFile(SOLFile):
     cA = fields.CampoND("Debe", size=15)
     cB = fields.CampoND("Haber", size=15)
     cC = fields.CampoV("Pesetas", size=15, getter=get_en_pesetas, parametros=('euros', ))
+    cD = fields.CampoA("Texto", size=5, truncate=True)
+    cE = fields.CampoA("Text2", size=5, truncate=False)
     euros = fields.CampoV('Euros', getter=get_euros, setter=set_euros, parametros=('cA', 'cB'))
 
     class Meta:
@@ -18,6 +20,19 @@ class TestFile(SOLFile):
         return u"TestFile(%s : %s)" % (self.cA, self.cB)
 
     __str__ = __unicode__
+
+
+class TestCampoA(unittest.TestCase):
+    def test_truncamiento(self):
+        tf = TestFile()
+        print "A ", tf._meta
+        print "B ", tf._meta.fields
+        cD = tf._meta.fields['cD']
+        cE = tf._meta.fields['cE']
+        tf.cD = '1234567890'
+        print cD.is_valid(tf)
+        tf = cE = '1234567890'
+        print cE.is_valid(tf)
 
 
 class TestCampoVirtual(unittest.TestCase):
