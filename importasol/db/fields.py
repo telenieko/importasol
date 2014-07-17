@@ -36,7 +36,11 @@ class Campo(object):
 
 class CampoA(Campo):
     base_type = types.UnicodeType
-    pass
+    truncate = None
+
+    def __init__(self, nombre, truncate=True, **kwargs):
+        self.truncate = truncate
+        return super(CampoA, self).__init__(nombre, **kwargs)
 
 
 class CampoT(CampoA):
