@@ -69,7 +69,7 @@ class TestCampoVirtual(unittest.TestCase):
         self.assertEqual(1000, tf1.euros)
         self.assertEqual(-100, tf2.euros)
 
-class TestCampAlias(unittest.TestCase):
+class TestCampoAlias(unittest.TestCase):
     def test_campo_alias(self):
         tf = TestFile()
         tf.euros = 1000
