@@ -31,6 +31,7 @@ class Campo(object):
     def contribute_to_class(self, cls, field_name):
         self.field_name = field_name
         setattr(cls, field_name, None)
+        cls._meta.add_field(field_name, self)
         print "Contribute to %s, %s" % (cls, field_name)
 
 
@@ -51,7 +52,7 @@ class CampoA(Campo):
 
     def get_valor(self, obj):
         val = super(CampoA, self).get_valor(obj)
-        if self.truncate is not None and val:
+        if self.truncate and val:
             return val[:self.size]
         else:
             return val

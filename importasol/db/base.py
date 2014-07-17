@@ -65,9 +65,6 @@ class SOLFileBase(type):
 
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
-            is_campo = [b for b in bases if isinstance(b, Campo)]
-            if is_campo:
-                self._meta.add_field(obj_name, obj)
         if new_class._meta.aliases:
             for de, a in new_class._meta.aliases:
                 if len(a) == 1:

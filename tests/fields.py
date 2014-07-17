@@ -3,6 +3,7 @@ from decimal import Decimal
 from importasol.db import fields
 from importasol.db.base import SOLFile
 from importasol.contasol import get_en_pesetas, get_euros, set_euros
+from importasol.exceptions import ValidationError
 
 
 class TestFile(SOLFile):
@@ -25,14 +26,14 @@ class TestFile(SOLFile):
 class TestCampoA(unittest.TestCase):
     def test_truncamiento(self):
         tf = TestFile()
-        print "A ", tf._meta
-        print "B ", tf._meta.fields
-        cD = tf._meta.fields['cD']
-        cE = tf._meta.fields['cE']
+        cD = tf._meta.fields.get('cD')
+        cE = tf._meta.fields.get('cE')
         tf.cD = '1234567890'
-        print cD.is_valid(tf)
-        tf = cE = '1234567890'
-        print cE.is_valid(tf)
+        self.assertEqual(True, cD.is_valid(tf))
+        self.assertEqual('12345', cD.get_valor(tf))
+        tf.cE = '1234567890'
+        self.assertRaises(ValidationError, cE.is_valid, tf)
+        self.assertEqual('1234567890', cE.get_valor(tf))
 
 
 class TestCampoVirtual(unittest.TestCase):
