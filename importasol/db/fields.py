@@ -2,6 +2,7 @@ import types
 from decimal import Decimal
 from datetime import date
 from ..exceptions import ValidationError, ProgrammingError
+from ..utiles import nivelar_cuenta
 
 
 class Campo(object):
@@ -145,4 +146,15 @@ class CampoV(Campo):
         self.field_name = field_name
         p = property(self.getvalue, self.setvalue)
         setattr(cls, field_name, p)
+
+
+class CampoCuenta(CampoA):
+    def __init__(self, nombre, *args, **kwargs):
+        if not 'binding_required' in kwargs.keys():
+            kwargs.update({'binding_required': True})
+        return super(CampoCuenta, self).__init__(nombre, *args, **kwargs)
+
+    def get_valor(self, obj):
+        val = super(CampoCuenta, self).get_valor(obj)
+        return nivelar_cuenta(val, obj.entorno.nivel_pgc)
 

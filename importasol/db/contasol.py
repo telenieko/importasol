@@ -1,10 +1,10 @@
 from decimal import Decimal
 from .base import SOLFile
-from .fields import CampoA, CampoT, CampoN, CampoF, CampoND, CampoV
+from .fields import CampoA, CampoT, CampoN, CampoF, CampoND, CampoV, CampoCuenta
 
 
 class MAE(SOLFile):
-    cA = CampoA("Cuenta", size=10, required=True)
+    cA = CampoCuenta("Cuenta", size=10, required=True)
     cB = CampoA("Descripcion", size=40, required=True)
     cC = CampoT("Descripcion Extendida")
     cD = CampoT("Mensaje Emergente")
@@ -48,7 +48,7 @@ class APU(SOLFile):
     cB = CampoF("Fecha", required=True)
     cC = CampoN("Asiento", size=5, default=0, required=True)
     cD = CampoN("Orden", size=6, required=True)
-    cE = CampoA("Cuenta", size=10, required=True)
+    cE = CampoCuenta("Cuenta", size=10, required=True)
     cF = CampoV("Pesetas", size=15, getter=get_en_pesetas, parametros=('cI', 'cJ'))
     cG = CampoA("Concepto", size=60)
     cH = CampoA("Documento", size=5)
