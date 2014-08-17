@@ -3,3 +3,4 @@ docs
 .ropeproject
 *.py[co]
 *.sublime-*
+test_output/
