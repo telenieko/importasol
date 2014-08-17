@@ -14,7 +14,7 @@ class MAE(SOLFile):
     class Meta:
         tabla = 'MAE'
         aliases = (('cuenta', 'A'), ('descripcion', 'B'),
-                ('dpto', 'E'), ('subdpto', 'F'))
+                   ('dpto', 'E'), ('subdpto', 'F'))
 
     def __unicode__(self):
         return u"MAE(%s: %s)" % (self.A, self.B)
@@ -23,6 +23,7 @@ class MAE(SOLFile):
 def get_en_pesetas(obj, col_valor):
     val = getattr(obj, col_valor)
     return val * Decimal('166.386')
+
 
 def set_euros(obj, value, col_debe, col_haber):
     if value < 0:
@@ -35,6 +36,7 @@ def set_euros(obj, value, col_debe, col_haber):
         debe = haber = None
     setattr(obj, col_debe, debe)
     setattr(obj, col_haber, haber)
+
 
 def get_euros(obj, col_debe, col_haber):
     d = getattr(obj, col_debe) or 0
@@ -49,7 +51,8 @@ class APU(SOLFile):
     cC = CampoN("Asiento", size=5, default=0, required=True)
     cD = CampoN("Orden", size=6, required=True)
     cE = CampoCuenta("Cuenta", size=10, required=True)
-    cF = CampoV("Pesetas", size=15, getter=get_en_pesetas, parametros=('cI', 'cJ'))
+    cF = CampoV("Pesetas", size=15, getter=get_en_pesetas,
+                parametros=('cI', 'cJ'))
     cG = CampoA("Concepto", size=60)
     cH = CampoA("Documento", size=5)
     cI = CampoND("Debe", size=15)
@@ -61,22 +64,24 @@ class APU(SOLFile):
     cO = CampoN("Departamento", size=3)
     cP = CampoN("Subdepartamento", size=3)
     cQ = CampoT("Ruta Imagen")
-    euros = CampoV("Euros", getter=get_euros, setter=set_euros, parametros=('cI', 'cJ'))
+    euros = CampoV("Euros", getter=get_euros, setter=set_euros,
+                   parametros=('cI', 'cJ'))
 
     class Meta:
         tabla = 'APU'
         aliases = (('cuenta', 'E'), ('asiento', 'C'), ('orden', 'D'),
                    ('concepto', 'G'), ('documento', 'H'), ('fecha', 'B'),
-                   ('debe', 'I'), ('haber', 'J'), ('dpto', 'O'), ('subdpto', 'P'))
+                   ('debe', 'I'), ('haber', 'J'), ('dpto', 'O'),
+                   ('subdpto', 'P'))
 
     def __unicode__(self):
         con = self.concepto and self.concepto[:10] or None
         return u"APU(%s: %s:%10s %s > %s" % \
-                (self.asiento, self.orden, self.cuenta, self.euros, con)
+               (self.asiento, self.orden, self.cuenta, self.euros, con)
 
     __str__ = __unicode__
     __repr__ = __unicode__
-        
+
 
 class Asiento():
     apuntes = None
@@ -127,4 +132,3 @@ class Asiento():
     def desvincular(self):
         for apu in self.apuntes:
             apu.entorno.unbind(apu)
-

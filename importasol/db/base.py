@@ -1,5 +1,6 @@
 import inspect
-from .fields import CampoAlias, Campo
+from .fields import CampoAlias
+
 
 class Options(object):
     aliases = None
@@ -39,11 +40,10 @@ class Options(object):
         self.fields.update({field_name: field})
 
 
-
 class SOLFileBase(type):
     def __new__(cls, name, bases, attrs):
         super_new = super(SOLFileBase, cls).__new__
-        
+
         # Comprobar que somos hijos de SOLFileBase
         parents = [b for b in bases if isinstance(b, SOLFileBase)]
         if not parents:
@@ -72,7 +72,7 @@ class SOLFileBase(type):
                 else:
                     ca = a
                 campo = CampoAlias(ca)
-                new_class.add_to_class(de,campo)
+                new_class.add_to_class(de, campo)
 
         return new_class
 
@@ -103,5 +103,3 @@ class SOLFile(object):
             field.unbind(self, self.entorno)
         self.is_bound = False
         self.entorno = None
-        
-

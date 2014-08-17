@@ -11,9 +11,10 @@ class Campo(object):
     required = None
     base_type = None
     default = None
-    binding_required = None # indica si get_valor y from_valor requieren estar vinculado a entorno
+    binding_required = None
 
-    def __init__(self, nombre, size, default=None, required=False, binding_required=False):
+    def __init__(self, nombre, size, default=None, required=False,
+                 binding_required=False):
         self.nombre = nombre
         self.size = size
         self.required = required
@@ -26,13 +27,15 @@ class Campo(object):
     def get_valor(self, obj):
         """ Devolver el valor que debe almacenarse en la Salida """
         if self.binding_required and not obj.is_bound:
-            raise ProgrammingError("%s tiene que estar enlazado a un entorno" % obj)
+            raise ProgrammingError(
+                "%s tiene que estar enlazado a un entorno" % obj)
         return getattr(obj, self.field_name)
 
     def from_valor(self, obj, value):
         """ De un valor que viene de un archivo o BBDD ponerlo en el objeto. """
         if self.binding_required and not obj.is_bound:
-            raise ProgrammingError("%s tiene que estar enlazado a un entorno" % obj)
+            raise ProgrammingError(
+                "%s tiene que estar enlazado a un entorno" % obj)
         return setattr(obj, self.field_name, value)
 
     def contribute_to_class(self, cls, field_name):
@@ -47,7 +50,6 @@ class Campo(object):
         pass
 
 
-
 class CampoA(Campo):
     base_type = types.UnicodeType
     truncate = None
@@ -59,7 +61,8 @@ class CampoA(Campo):
     def is_valid(self, obj):
         val = self.get_valor(obj)
         if len(val) > self.size:
-            raise ValidationError("El texto es mayor de lo permitido y truncate=False")
+            raise ValidationError(
+                "El texto es mayor de lo permitido y truncate=False")
         return True
 
     def get_valor(self, obj):
@@ -68,12 +71,11 @@ class CampoA(Campo):
             return val[:self.size]
         else:
             return val
-            
 
 
 class CampoT(CampoA):
     def __init__(self, nombre, **kwargs):
-        if kwargs.has_key('size'):
+        if 'size' in kwargs:
             raise ValueError("El CampoT siempre tiene un largo de 255!")
         kwargs.update({'size': 255})
         return super(CampoT, self).__init__(nombre, **kwargs)
@@ -91,6 +93,7 @@ class CampoN(CampoND):
 
 class CampoF(Campo):
     base_type = date
+
     def __init__(self, *args, **kwargs):
         kwargs.update({'size': 0})
         super(CampoF, self).__init__(*args, **kwargs)
@@ -121,11 +124,12 @@ class CampoV(Campo):
     setter = None
     parametros = None
 
-    def __init__(self, nombre, getter=None, setter=None , parametros=tuple(), **kwargs):
+    def __init__(self, nombre, getter=None, setter=None,
+                 parametros=tuple(), **kwargs):
         self.getter = getter
         self.setter = setter
         self.parametros = parametros
-        if not kwargs.has_key('size'):
+        if not 'size' in kwargs:
             kwargs.update({'size': 0})
         return super(CampoV, self).__init__(nombre, **kwargs)
 
@@ -157,4 +161,3 @@ class CampoCuenta(CampoA):
     def get_valor(self, obj):
         val = super(CampoCuenta, self).get_valor(obj)
         return nivelar_cuenta(val, obj.entorno.nivel_pgc)
-

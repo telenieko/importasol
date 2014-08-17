@@ -14,10 +14,10 @@
     "bind".
 """
 
+
 class EntornoSOL(object):
     nivel_pgc = 8
     tablas = {}
-
 
     def __init__(self):
         self.tablas = dict()
@@ -44,9 +44,8 @@ class EntornoSOL(object):
         """ Desvincular un elemento de este entorno. """
         tabla = self.get_tabla_elemento(elemento)
         if elemento not in tabla:
-            raise ValueError("No puedo desvincular un elemento que no esta vinculado a mi!")
+            raise ValueError(
+                "No puedo desvincular un elemento que no esta vinculado a mi!")
         elemento.unbind()
         tabla = self.get_tabla_elemento(elemento)
         tabla.remove(elemento)
-
-
