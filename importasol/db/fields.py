@@ -32,7 +32,6 @@ class Campo(object):
         self.field_name = field_name
         setattr(cls, field_name, None)
         cls._meta.add_field(field_name, self)
-        print "Contribute to %s, %s" % (cls, field_name)
 
     def bind(self, obj, entorno):
         pass
@@ -98,7 +97,6 @@ class CampoAlias(object):
         self.alias_de = alias_de
 
     def contribute_to_class(self, cls, field_name):
-        print "Creo alias de %s en %s, %s" % (self.alias_de, cls, field_name)
         self.field_name = field_name
         p = property(self.getvalue, self.setvalue)
         setattr(cls, field_name, p)
