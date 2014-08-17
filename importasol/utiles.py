@@ -1,5 +1,4 @@
-from string import join
-
+from string import join, ascii_letters
 
 def nivelar_cuenta(cuenta, nivel):
     """ Nivelar una cuenta en formato XX.Y segun nivel
@@ -30,3 +29,12 @@ def nivelar_cuenta(cuenta, nivel):
     miss = nivel - (len(cuenta) - 1)
     val = parts[0] + join(['0' for i in range(0, miss)], '') + parts[1]
     return unicode(val)
+
+
+def col2num(col):
+    # http://stackoverflow.com/questions/7261936/convert-an-excel-or-spreadsheet-column-letter-to-its-number-in-pythonic-fashion
+    num = 0
+    for c in col:
+        if c in ascii_letters:
+            num = num * 26 + (ord(c.upper()) - ord('A')) + 1
+    return num
