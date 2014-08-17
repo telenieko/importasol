@@ -15,6 +15,7 @@ class TestFile(SOLFile):
     euros = fields.CampoV('Euros', getter=get_euros, setter=set_euros, parametros=('cA', 'cB'))
 
     class Meta:
+        tabla = 'TST'
         aliases = (('pesetas', 'cC'), )
 
     def __unicode__(self):

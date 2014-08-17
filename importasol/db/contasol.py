@@ -12,6 +12,7 @@ class MAE(SOLFile):
     cF = CampoN("Subdepartamento", size=4)
 
     class Meta:
+        tabla = 'MAE'
         aliases = (('cuenta', 'A'), ('descripcion', 'B'),
                 ('dpto', 'E'), ('subdpto', 'F'))
 
@@ -63,6 +64,7 @@ class APU(SOLFile):
     euros = CampoV("Euros", getter=get_euros, setter=set_euros, parametros=('cI', 'cJ'))
 
     class Meta:
+        tabla = 'APU'
         aliases = (('cuenta', 'E'), ('asiento', 'C'), ('orden', 'D'),
                    ('concepto', 'G'), ('documento', 'H'), ('fecha', 'B'),
                    ('debe', 'I'), ('haber', 'J'), ('dpto', 'O'), ('subdpto', 'P'))
