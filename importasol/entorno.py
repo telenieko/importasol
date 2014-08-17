@@ -14,6 +14,10 @@
     "bind".
 """
 
+import logging
+import xlwt
+import os
+
 
 class EntornoSOL(object):
     nivel_pgc = 8
@@ -49,3 +53,23 @@ class EntornoSOL(object):
         elemento.unbind()
         tabla = self.get_tabla_elemento(elemento)
         tabla.remove(elemento)
+
+    def create_xls(self, name):
+        wb = xlwt.Workbook()
+        ws = wb.add_sheet(name)
+        return wb, ws
+
+    def generar_xls(self, outdir):
+        """ Generar los archivos XLS de cada tabla dentro
+            de la carpeta ``outdir``
+        """
+        for name, rows in self.tablas.iteritems():
+            logging.info("Voy a procesar la tabla %s" % name)
+            wb, ws = self.create_xls(name)
+            fname = os.path.join(outdir, '%s.xls' % name)
+            rowno = 1
+            for row in rows:
+                row.to_xls(rowno, ws)
+                rowno += 1
+            wb.save(fname)
+            logging.info("Tabla %s exportada" % name)

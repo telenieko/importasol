@@ -1,6 +1,6 @@
 import inspect
 from .fields import CampoAlias
-
+from ..utiles import col2num
 
 class Options(object):
     aliases = None
@@ -103,3 +103,15 @@ class SOLFile(object):
             field.unbind(self, self.entorno)
         self.is_bound = False
         self.entorno = None
+
+    def to_xls(self, rowno, ws):
+        """ Escribir esta fila en el Excel de salida,
+            ``ws`` es un Worksheet,
+            ``rowno`` es el numero de fila a escribir ahora.
+        """
+        for name, field in self._meta.fields.iteritems():
+            if name[0] != 'c':
+                continue
+            colnum = col2num(name[1:])
+            val = field.get_valor(self)
+            ws.write(rowno, colnum, val)
