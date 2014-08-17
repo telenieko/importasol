@@ -10,22 +10,28 @@ class Campo(object):
     required = None
     base_type = None
     default = None
+    binding_required = None # indica si get_valor y from_valor requieren estar vinculado a entorno
 
-    def __init__(self, nombre, size, default=None, required=False):
+    def __init__(self, nombre, size, default=None, required=False, binding_required=False):
         self.nombre = nombre
         self.size = size
         self.required = required
         self.default = default
+        self.binding_required = binding_required
 
     def is_valid(self, obj, value):
         raise ProgrammingError("Hay que implementar is_valid!!")
 
     def get_valor(self, obj):
         """ Devolver el valor que debe almacenarse en la Salida """
+        if self.binding_required and not obj.is_bound:
+            raise ProgrammingError("%s tiene que estar enlazado a un entorno" % obj)
         return getattr(obj, self.field_name)
 
     def from_valor(self, obj, value):
         """ De un valor que viene de un archivo o BBDD ponerlo en el objeto. """
+        if self.binding_required and not obj.is_bound:
+            raise ProgrammingError("%s tiene que estar enlazado a un entorno" % obj)
         return setattr(obj, self.field_name, value)
 
     def contribute_to_class(self, cls, field_name):
