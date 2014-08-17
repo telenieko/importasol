@@ -2,3 +2,4 @@ prueba.py
 docs
 .ropeproject
 *.py[co]
+*.sublime-*
