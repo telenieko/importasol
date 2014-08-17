@@ -120,5 +120,11 @@ class Asiento():
             apu.orden = i
             i += 1
 
+    def vincular(self, entorno):
+        for apu in self.apuntes:
+            entorno.bind(apu)
 
+    def desvincular(self):
+        for apu in self.apuntes:
+            apu.entorno.unbind(apu)
 

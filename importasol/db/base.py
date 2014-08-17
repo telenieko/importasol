@@ -86,7 +86,22 @@ class SOLFileBase(type):
 
 class SOLFile(object):
     __metaclass__ = SOLFileBase
+    is_bound = False
+    entorno = None
 
     class Meta:
         pass
+
+    def bind(self, entorno):
+        self.is_bound = True
+        self.entorno = entorno
+        for name, field in self._meta.fields.iteritems():
+            field.bind(self, entorno)
+
+    def unbind(self):
+        for name, field in self._meta.fields.iteritems():
+            field.unbind(self, self.entorno)
+        self.is_bound = False
+        self.entorno = None
+        
 

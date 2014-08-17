@@ -34,6 +34,12 @@ class Campo(object):
         cls._meta.add_field(field_name, self)
         print "Contribute to %s, %s" % (cls, field_name)
 
+    def bind(self, obj, entorno):
+        pass
+
+    def unbind(self, obj, entorno):
+        pass
+
 
 
 class CampoA(Campo):
