@@ -4,3 +4,6 @@ docs
 *.py[co]
 *.sublime-*
 test_output/
+build/
+dist/
+importasol.egg-info/
