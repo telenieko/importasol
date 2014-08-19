@@ -112,6 +112,6 @@ class SOLFile(object):
         for name, field in self._meta.fields.iteritems():
             if name[0] != 'c':
                 continue
-            colnum = col2num(name[1:])
+            colnum = col2num(name[1:])-1
             val = field.get_valor(self)
             ws.write(rowno, colnum, val)
