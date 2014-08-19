@@ -29,7 +29,10 @@ class Campo(object):
         if self.binding_required and not obj.is_bound:
             raise ProgrammingError(
                 "%s tiene que estar enlazado a un entorno" % obj)
-        return getattr(obj, self.field_name)
+        val = getattr(obj, self.field_name)
+        if not val and self.default:
+            return self.default
+        return val
 
     def from_valor(self, obj, value):
         """ De un valor que viene de un archivo o BBDD ponerlo en el objeto. """
