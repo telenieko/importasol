@@ -1,17 +1,15 @@
-#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
 """ EntornoSOL
 
-    El objeto de Entorno provee un marco común desde el que "coordinar" todas
-    las tablas de una misma base de datos (ie: APU y MAE de una misma
-    contabilidad).
+El objeto de Entorno provee un marco común desde el que "coordinar" todas
+las tablas de una misma base de datos (ie: APU y MAE de una misma
+contabilidad).
 
-    En el Entorno se encuentran los datos comunes como el nivel del plan de
-    cuentas y es desde donde se lanza la generación de los archivos de salida.
+En el Entorno se encuentran los datos comunes como el nivel del plan de
+cuentas y es desde donde se lanza la generación de los archivos de salida.
 
-    Los objetos derivados de SOLFile quedan "vinculados" a un entorno mediante
-    "bind".
+Los objetos derivados de SOLFile quedan "vinculados" a un entorno mediante
+"bind".
 """
 
 import logging
@@ -48,8 +46,7 @@ class EntornoSOL(object):
         """ Desvincular un elemento de este entorno. """
         tabla = self.get_tabla_elemento(elemento)
         if elemento not in tabla:
-            raise ValueError(
-                "No puedo desvincular un elemento que no esta vinculado a mi!")
+            raise ValueError("No puedo desvincular un elemento que no esta vinculado a mi!")
         elemento.unbind()
         tabla = self.get_tabla_elemento(elemento)
         tabla.remove(elemento)
@@ -60,9 +57,7 @@ class EntornoSOL(object):
         return wb, ws
 
     def generar_xls(self, outdir):
-        """ Generar los archivos XLS de cada tabla dentro
-            de la carpeta ``outdir``
-        """
+        """ Generar los archivos XLS de cada tabla dentro de la carpeta ``outdir``. """
         for name, rows in self.tablas.iteritems():
             logging.info("Voy a procesar la tabla %s" % name)
             wb, ws = self.create_xls(name)

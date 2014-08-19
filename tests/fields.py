@@ -2,7 +2,7 @@ import unittest
 from decimal import Decimal
 from importasol.db import fields
 from importasol.db.base import SOLFile
-from importasol.db.contasol import get_en_pesetas, get_euros, set_euros
+from importasol.db.contasol.apu import get_en_pesetas, get_euros, set_euros
 from importasol.exceptions import ValidationError
 
 
