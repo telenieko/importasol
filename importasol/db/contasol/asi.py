@@ -1,6 +1,24 @@
 class Asiento():
     apuntes = None
-    numero = None
+    _numero = 0
+
+    def __str__(self):
+        return unicode(self)
+
+    def __unicode__(self):
+        s = u'Asiento(\n'
+        for apu in self.apuntes:
+            s += u'\t%s\n' % unicode(apu)
+        s += '\t)'
+        return s
+
+    def _get_numero(self):
+        return self._numero
+
+    def _set_numero(self, val):
+        for a in self.apuntes:
+            a.asiento = val
+        self._numero = val
 
     def __init__(self, numero=None, apuntes=None):
         self.numero = numero
