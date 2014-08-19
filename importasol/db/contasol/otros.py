@@ -16,4 +16,13 @@ class MAE(SOLFile):
                    ('dpto', 'E'), ('subdpto', 'F'))
 
     def __unicode__(self):
-        return u"MAE(%s: %s)" % (self.A, self.B)
+        t = u"MAE("
+        if self.dpto:
+            t += '%s' % self.dpto
+        if self.subdpto:
+            t += '|%s' % self.subdpto
+        t += ') %s: %s' % (self.cA, self.cB)
+        return t
+
+    __str__ = __unicode__
+    __repr__ = __unicode__
