@@ -43,9 +43,13 @@ class Asiento():
         if apunte in self.apuntes:
             raise ValueError("Apunte duplicado en el asiento")
         self.apuntes.append(apunte)
+        apunte.asi = self
+        apunte.asiento = self.numero
 
     def rm(self, apunte):
         self.apuntes.remove(apunte)
+        apunte.asi = None
+        apunte.asiento = 0
 
     def reordena(self):
         """ Ordenar la lista de apuntes segun el campo Orden de cada uno. """

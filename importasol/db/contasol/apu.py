@@ -51,6 +51,8 @@ class APU(SOLFile):
     euros = CampoV("Euros", getter=get_euros, setter=set_euros,
                    parametros=('cI', 'cJ'))
 
+    asi = None
+
     class Meta:
         tabla = 'APU'
         aliases = (('cuenta', 'E'), ('asiento', 'C'), ('orden', 'D'),
