@@ -59,8 +59,8 @@ class APU(SOLFile):
                    ('subdpto', 'P'))
 
     def __unicode__(self):
-        con = self.concepto and self.concepto[:10] or None
-        return u"APU(%s: %s:%10s %s > %s" % \
+        con = self.concepto and self.concepto[:40] or None
+        return u"APU(%s: %s:%10s %s > %s)" % \
                (self.asiento, self.orden, self.cuenta, self.euros, con)
 
     __str__ = __unicode__
