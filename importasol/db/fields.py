@@ -94,7 +94,26 @@ class CampoND(Campo):
 
 class CampoN(CampoND):
     base_type = types.IntType
-    pass
+
+    def is_valid(self, obj):
+        val = self.get_valor(obj)
+        if len(str(val)) > self.size:
+            raise ValidationError(
+                "El numero es mas largo que el limite")
+        return True
+
+
+class CampoB(CampoN):
+    base_type = types.BooleanType
+
+    def get_valor(self, obj):
+        val = super(CampoB, self).get_valor(obj)
+        if val is False:
+            return 0
+        elif val is True:
+            return 1
+        else:
+            return val
 
 
 class CampoF(Campo):
