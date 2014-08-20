@@ -50,14 +50,17 @@ class Campo(object):
         self.field_name = field_name
         setattr(cls, field_name, None)
         cls._meta.add_field(field_name, self)
-        if self.auto_alias:
-            self.crear_alias(cls, field_name)
+        if self.auto_alias is not False:
+            if self.auto_alias is True:
+                alias_name = self.nombre.lower()
+                for a, b in ((' ', '_'), ('-', '_')):
+                    alias_name = alias_name.replace(a, b)
+                self.crear_alias(cls, alias_name)
+            else:
+                self.crear_alias(cls, self.auto_alias)
 
-    def crear_alias(self, cls, field_name):
-        alias_name = self.nombre.lower()
-        for a, b in ((' ', '_'), ('-', '_')):
-            alias_name = alias_name.replace(a, b)
-        ca = CampoAlias(field_name)
+    def crear_alias(self, cls, alias_name):
+        ca = CampoAlias(self.field_name)
         ca.contribute_to_class(cls, alias_name)
 
     def bind(self, obj, entorno):

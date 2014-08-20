@@ -49,8 +49,8 @@ class CLI(SOLFile):
     cAO = CampoB("No imprimir", default=False)
     cAP = CampoA("Domicilio del Banco", size=100)
     cAQ = CampoA("Poblacion del banco", size=50)
-    cAR = CampoA("IBAN del banco", size=50)
-    cAS = CampoA("SWIFT del banco", size=11)
+    cAR = CampoA("IBAN del banco", size=50, auto_alias="iban")
+    cAS = CampoA("SWIFT del banco", size=11, auto_alias="swift")
 
     cDK = CampoN("Tipo de impuesto", default=0, size=1)
     cDM = CampoA("Cuenta PGC", size=3, truncate=False)
