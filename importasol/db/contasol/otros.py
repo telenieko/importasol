@@ -12,8 +12,7 @@ class MAE(SOLFile):
 
     class Meta:
         tabla = 'MAE'
-        aliases = (('cuenta', 'A'), ('descripcion', 'B'),
-                   ('dpto', 'E'), ('subdpto', 'F'))
+        aliases = (('dpto', 'E'), ('subdpto', 'F'))
 
     def __unicode__(self):
         t = u"MAE("

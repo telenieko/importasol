@@ -55,10 +55,7 @@ class APU(SOLFile):
 
     class Meta:
         tabla = 'APU'
-        aliases = (('cuenta', 'E'), ('asiento', 'C'), ('orden', 'D'),
-                   ('concepto', 'G'), ('documento', 'H'), ('fecha', 'B'),
-                   ('debe', 'I'), ('haber', 'J'), ('dpto', 'O'),
-                   ('subdpto', 'P'))
+        aliases = (('dpto', 'O'), ('subdpto', 'P'))
 
     def __unicode__(self):
         con = self.concepto and self.concepto[:40] or None
