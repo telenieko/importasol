@@ -12,14 +12,16 @@ class Campo(object):
     base_type = None
     default = None
     binding_required = None
+    auto_alias = None
 
     def __init__(self, nombre, size, default=None, required=False,
-                 binding_required=False):
+                 binding_required=False, auto_alias=True):
         self.nombre = nombre
         self.size = size
         self.required = required
         self.default = default
         self.binding_required = binding_required
+        self.auto_alias = auto_alias
 
     def is_valid(self, obj, value):
         raise ProgrammingError("Hay que implementar is_valid!!")
@@ -48,6 +50,15 @@ class Campo(object):
         self.field_name = field_name
         setattr(cls, field_name, None)
         cls._meta.add_field(field_name, self)
+        if self.auto_alias:
+            self.crear_alias(cls, field_name)
+
+    def crear_alias(self, cls, field_name):
+        alias_name = self.nombre.lower()
+        for a, b in ((' ', '_'), ('-', '_')):
+            alias_name = alias_name.replace(a, b)
+        ca = CampoAlias(field_name)
+        ca.contribute_to_class(cls, alias_name)
 
     def bind(self, obj, entorno):
         pass
