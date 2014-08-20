@@ -117,6 +117,12 @@ class CampoN(CampoND):
 class CampoB(CampoN):
     base_type = types.BooleanType
 
+    def __init__(self, nombre, **kwargs):
+        if 'size' in kwargs:
+            raise ValueError("El CampoB siempre tiene un largo de 1")
+        kwargs.update({'size': 1})
+        return super(CampoB, self).__init__(nombre, **kwargs)
+
     def get_valor(self, obj):
         val = super(CampoB, self).get_valor(obj)
         if val is False:
