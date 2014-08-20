@@ -52,13 +52,13 @@ class CLI(SOLFile):
     cAR = CampoA("IBAN del banco", size=50)
     cAS = CampoA("SWIFT del banco", size=11)
 
-    cDK = CampoN("Tipo de impuesto", default=0)
+    cDK = CampoN("Tipo de impuesto", default=0, size=1)
     cDM = CampoA("Cuenta PGC", size=3, truncate=False)
     cDS = CampoN("Estado", size=1, default=0)
     cDV = CampoN("Dia de pago", size=2)
 
     class Meta:
-        tabla = 'MAE'
+        tabla = 'CLI'
 
     def __unicode__(self):
         t = u"CLI(%s, %s)" % (self.cA, self.cD)
