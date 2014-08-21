@@ -27,7 +27,10 @@ class EntornoSOL(object):
     def get_tabla_elemento(self, elemento):
         """ Obtener la tabla que corresponde a este elemento. """
         tablas = self.tablas
-        nom = elemento._meta.tabla
+        if isinstance(elemento, type('')):
+            nom = elemento
+        else:
+            nom = elemento._meta.tabla
         if nom not in tablas.keys():
             tablas[nom] = []
         return tablas.get(nom)
