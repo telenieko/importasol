@@ -65,8 +65,11 @@ class EntornoSOL(object):
             logging.info("Voy a procesar la tabla %s" % name)
             wb, ws = self.create_xls(name)
             fname = os.path.join(outdir, '%s.xls' % name)
-            rowno = 1
+            rowno = 0
             for row in rows:
+                # if rowno == 0:
+                    # row.__class__.to_xls_header(0, ws)
+                    # rowno = 1
                 row.to_xls(rowno, ws)
                 rowno += 1
             wb.save(fname)
