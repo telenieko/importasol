@@ -39,7 +39,7 @@ class CLI(SOLFile):
     cAE = CampoA("Direccion Web", size=60)
     cAF = CampoA("Cuenta Skype", size=60)
     cAG = CampoA("Mensaje Emergente", size=50)
-    cAH = CampoA("Observaciones", size=255)
+    cAH = CampoA("Observaciones", size=255, truncate=False)
     cAI = CampoA("Horario", size=30)
     cAJ = CampoA("Vacaciones Desde", size=5)
     cAK = CampoA("Vacaciones Hasta", size=5)
@@ -59,6 +59,7 @@ class CLI(SOLFile):
 
     class Meta:
         tabla = 'CLI'
+        aliases = (('cD', 'nombre'), )
 
     def __unicode__(self):
         t = u"CLI(%s, %s)" % (self.cA, self.cD)
