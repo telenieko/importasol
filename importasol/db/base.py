@@ -105,7 +105,7 @@ class SOLFile(object):
         self.entorno = None
 
     def to_xls(self, rowno, ws):
-        """ Escribir esta fila en el Excel de salida,
+        """ Escribir esta fila en el Excel de salida.
             ``ws`` es un Worksheet,
             ``rowno`` es el numero de fila a escribir ahora.
         """
@@ -115,3 +115,12 @@ class SOLFile(object):
             colnum = col2num(name[1:])-1
             val = field.get_valor(self)
             ws.write(rowno, colnum, val)
+
+    @classmethod
+    def to_xls_header(cls, rowno, ws):
+        """ Escribir la fila de cabecera en el Excel. """
+        for name, field in cls._meta.fields.iteritems():
+            if name[0] != 'c':
+                continue
+            colnum = col2num(name[1:])-1
+            ws.write(rowno, colnum, field.nombre)
