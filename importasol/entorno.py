@@ -70,7 +70,11 @@ class EntornoSOL(object):
                 # if rowno == 0:
                     # row.__class__.to_xls_header(0, ws)
                     # rowno = 1
-                row.to_xls(rowno, ws)
+                try:
+                    row.to_xls(rowno, ws)
+                except:
+                    logging.error("Error procesando tabla %s" % name)
+                    raise
                 rowno += 1
             wb.save(fname)
             logging.info("Tabla %s exportada" % name)
