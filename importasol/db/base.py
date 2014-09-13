@@ -131,3 +131,14 @@ class SOLFile(object):
                 continue
             colnum = col2num(name[1:])-1
             ws.write(rowno, colnum, field.nombre)
+
+    def copy(self):
+        """ Hacer una copia de uno mismo, solo los campos. """
+        new = self.__class__()
+        for name, field in self._meta.fields.iteritems():
+            if name[0] != 'c':
+                continue
+            val = getattr(self, name)
+            if val:
+                setattr(new, name, val)
+        return new
