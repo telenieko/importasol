@@ -132,6 +132,28 @@ class SOLFile(object):
             colnum = col2num(name[1:])-1
             ws.write(rowno, colnum, field.nombre)
 
+    @classmethod
+    def from_xls(cls, ws, skiprows=0):
+        """ Lee una hoja de datos que (presumiblemente) esta en el formato de este SOLFile. """
+        rowno = skiprows
+        filas = []
+        while rowno < ws.nrows:
+            row = ws.row(rowno)
+            obj = cls()
+            for name, field in cls._meta.fields.iteritems():
+                if name[0] != 'c':
+                    continue
+                colnum = col2num(name[1:])-1
+                try:
+                    val = row[colnum]
+                except IndexError:
+                    continue
+                if val:
+                    field.from_valor(obj, val)
+            filas.append(obj)
+            rowno += 1
+        return filas
+
     def copy(self):
         """ Hacer una copia de uno mismo, solo los campos. """
         new = self.__class__()
