@@ -205,4 +205,6 @@ class CampoCuenta(CampoA):
 
     def get_valor(self, obj):
         val = super(CampoCuenta, self).get_valor(obj)
+        if val is None:
+            return None
         return nivelar_cuenta(val, obj.entorno.nivel_pgc)
