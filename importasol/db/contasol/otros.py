@@ -25,3 +25,36 @@ class MAE(SOLFile):
 
     __str__ = __unicode__
     __repr__ = __unicode__
+
+
+class DEP(SOLFile):
+    cA = CampoN("Codigo", size=3, required=True)
+    cB = CampoA("Denominacion", size=50)
+    cC = CampoA("Observaciones", size=255)
+
+    class Meta:
+        tabla = 'DEP'
+
+    def __unicode__(self):
+        t = u"DEP(%s: %s)" % (self.cA, self.cB)
+        return t
+
+    __str__ = __unicode__
+    __repr__ = __unicode__
+
+
+class SDE(SOLFile):
+    cA = CampoN("Departamento", size=3, required=True)
+    cB = CampoN("Codigo", size=3, required=3)
+    cC = CampoA("Denominacion", size=50)
+    cD = CampoA("Observaciones", size=255)
+
+    class Meta:
+        tabla = 'SDE'
+
+    def __unicode__(self):
+        t = u"SDE(%s.%s: %s)" % (self.cA, self.cB, self.cC)
+        return t
+
+    __str__ = __unicode__
+    __repr__ = __unicode__
