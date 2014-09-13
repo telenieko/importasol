@@ -114,7 +114,14 @@ class SOLFile(object):
                 continue
             colnum = col2num(name[1:])-1
             val = field.get_valor(self)
-            ws.write(rowno, colnum, val)
+            try:
+                ws.write(rowno, colnum, val)
+            except:
+                import logging
+                logging.warning("No puedo XLSear %s" % unicode(self))
+                logging.exception("Error con linea:%s, column: %s, valor:%s tabla: %s" % (
+                    rowno, name, val, self._meta.table_name))
+                raise
 
     @classmethod
     def to_xls_header(cls, rowno, ws):
