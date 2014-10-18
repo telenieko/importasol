@@ -35,6 +35,21 @@ class EntornoSOL(object):
             tablas[nom] = []
         return tablas.get(nom)
 
+    def find(self, tabla, **filtro):
+        """ Busca dentro de la tabla.
+
+        el elemento que coincida con lo indicado en ``filtro``.
+        """
+        t = self.get_tabla_elemento(tabla)
+        if len(filtro) > 1:
+            raise ValueError("Por ahora solo se buscar con una sola opcion")
+        attr = filtro.keys()[0]
+        val = filtro[attr]
+        for it in t:
+            if getattr(it, attr) == val:
+                return it
+        return None
+
     def bind(self, elemento):
         """ Vincular un elemento a este entorno. """
         if elemento.is_bound:

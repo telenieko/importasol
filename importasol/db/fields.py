@@ -3,6 +3,7 @@ from decimal import Decimal
 from datetime import date
 from ..exceptions import ValidationError, ProgrammingError
 from ..utiles import nivelar_cuenta
+import datetime
 
 
 class Campo(object):
@@ -53,7 +54,7 @@ class Campo(object):
         if self.auto_alias is not False:
             if self.auto_alias is True:
                 alias_name = self.nombre.lower()
-                for a, b in ((' ', '_'), ('-', '_')):
+                for a, b in ((' ', '_'), ('-', '_'), ('.', '')):
                     alias_name = alias_name.replace(a, b)
                 self.crear_alias(cls, alias_name)
             else:
@@ -142,6 +143,14 @@ class CampoF(Campo):
     def __init__(self, *args, **kwargs):
         kwargs.update({'size': 0})
         super(CampoF, self).__init__(*args, **kwargs)
+
+    def from_valor(self, obj, value):
+        date = datetime.datetime(1899, 12, 30)
+        get_ = datetime.timedelta(int(value))
+        get_col2 = str(date + get_)[:10]
+        d = datetime.datetime.strptime(get_col2, '%Y-%m-%d')
+        fecha = d
+        setattr(obj, self.field_name, fecha)
 
 
 class CampoAlias(object):
