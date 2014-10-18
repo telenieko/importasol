@@ -2,6 +2,7 @@ import inspect
 from .fields import CampoAlias
 from ..utiles import col2num
 
+
 class Options(object):
     aliases = None
     model = None
@@ -148,6 +149,7 @@ class SOLFile(object):
                     val = row[colnum]
                 except IndexError:
                     continue
+                val = val.value
                 if val:
                     field.from_valor(obj, val)
             filas.append(obj)
