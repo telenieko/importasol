@@ -62,6 +62,23 @@ class FAC(SOLFile):
         self.telefono_del_cliente = cli.telefono
         return True
 
+    def copiar_datos_cli(self, cli, banco=True):
+        """ Copiar datos del cliente (obtenido del MDB) que hay que meter en factura. """
+        self.cliente = cli['codcli']
+        self.cI = cli['nofcli']
+        self.cJ = cli['domcli']
+        for src, campo in (('pobcli', 'poblacion'), ('cpocli', 'codigo_postal'),
+                           ('procli', 'provincia'), ('nifcli', 'nif'),
+                           ('ivacli', 'tipo_de_iva'), ('agecli', 'agente')):
+            setattr(self, campo, cli.get(src))
+        if banco:
+            for src, campo in (('bancli', 'banco'), ('entcli', 'entidad'),
+                               ('oficli', 'oficina'), ('dcocli', 'dc'),
+                               ('cuecli', 'cuenta')):
+                setattr(self, campo, cli.get(src))
+        self.telefono_del_cliente = cli['telcli']
+        return True
+
     class Meta:
         tabla = 'FAC'
 
