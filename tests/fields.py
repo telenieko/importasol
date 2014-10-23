@@ -3,6 +3,7 @@ from decimal import Decimal
 from importasol.db import fields
 from importasol.db.base import SOLFile
 from importasol.db.contasol.apu import get_en_pesetas, get_euros, set_euros
+from importasol.db.contasol.sal import CampoSaldo
 from importasol.exceptions import ValidationError
 
 
@@ -12,6 +13,7 @@ class TestFile(SOLFile):
     cC = fields.CampoV("Pesetas", size=15, getter=get_en_pesetas, parametros=('euros', ))
     cD = fields.CampoA("Texto", size=5, truncate=True)
     cE = fields.CampoA("Text2", size=5, truncate=False)
+    saldo = CampoSaldo("apertura", 'F', 'G')
     euros = fields.CampoV('Euros', getter=get_euros, setter=set_euros, parametros=('cA', 'cB'))
 
     class Meta:
@@ -81,3 +83,14 @@ class TestCampoAlias(unittest.TestCase):
         tf = TestFile()
         tf.texto = "Hola"
         self.assertEqual("Hola", tf.cD)
+
+
+class TestCampoSaldo(unittest.TestCase):
+    def test_campo_saldo(self):
+        tf = TestFile()
+        attrs = dir(tf)
+        for a in ['saldo_debe', 'cF', 'saldo_haber', 'cG']:
+            self.assertIn(a, attrs)
+        tf.saldo_debe = 100
+        tf.saldo_haber = 150
+        self.assertEqual(tf.saldo, -50)

@@ -234,3 +234,48 @@ class CampoCuenta(CampoA):
         if val is None:
             return None
         return nivelar_cuenta(val, obj.entorno.nivel_pgc)
+
+
+class CampoDebeHaber(CampoV):
+
+    """ CampoDebeHaber, un campo que saber que es el debe y el haber!. """
+
+    def __init__(self, nombre, col_debe, col_haber, editable=True, **kwargs):
+        self.col_debe = col_debe
+        self.col_haber = col_haber
+        if 'size' not in kwargs:
+            kwargs.update({'size': 15})
+        if editable:
+            kwargs.update({'setter': self.set_saldo})
+        super(CampoDebeHaber, self).__init__(nombre, getter=self.get_saldo, **kwargs)
+
+    def get_saldo(self, obj):
+        debe = self.campo_debe.get_valor(obj) or 0
+        haber = self.campo_haber.get_valor(obj) or 0
+        return (debe - haber)
+
+    def set_saldo(self, obj, value):
+        if value < 0:
+            debe = None
+            haber = abs(value)
+        elif value > 0:
+            debe = abs(value)
+            haber = None
+        else:
+            debe = haber = None
+        self.campo_debe.from_valor(obj, debe)
+        self.campo_haber.from_valor(obj, haber)
+
+    def contribute_to_class(self, cls, field_name):
+        super(CampoDebeHaber, self).contribute_to_class(cls, field_name)
+        campo_debe = CampoND("c%s" % self.col_debe, self.size, auto_alias=False)
+        campo_haber = CampoND("c%s" % self.col_haber, self.size, auto_alias=False)
+        cls._meta.add_field(field_name, self)
+        campo_debe.contribute_to_class(cls, campo_debe.nombre)
+        campo_haber.contribute_to_class(cls, campo_haber.nombre)
+
+        campo_debe.crear_alias(cls, '%s_debe' % field_name)
+        campo_haber.crear_alias(cls, '%s_haber' % field_name)
+
+        self.campo_debe = campo_debe
+        self.campo_haber = campo_haber
