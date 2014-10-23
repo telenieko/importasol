@@ -1,5 +1,6 @@
 from string import join, ascii_letters
 
+
 def nivelar_cuenta(cuenta, nivel):
     """ Nivelar una cuenta en formato XX.Y segun nivel
         >>> nivelar_cuenta('41.3', 8)
@@ -38,3 +39,10 @@ def col2num(col):
         if c in ascii_letters:
             num = num * 26 + (ord(c.upper()) - ord('A')) + 1
     return num
+
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
