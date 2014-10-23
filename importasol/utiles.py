@@ -41,6 +41,17 @@ def col2num(col):
     return num
 
 
+def num_to_col_letters(num):
+    # http://stackoverflow.com/questions/23861680/convert-spreadsheet-number-to-column-letter?rq=1
+    div = num
+    string = ""
+    while div > 0:
+        module = (div-1) % 26
+        string = chr(65 + module) + string
+        div = int((div - module)/26)
+    return string
+
+
 def dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
