@@ -3,8 +3,9 @@ from decimal import Decimal
 from importasol.db import fields
 from importasol.db.base import SOLFile
 from importasol.db import contasol
-from importasol.db.contasol import APU, Asiento
+from importasol.db.contasol import APU, Asiento, ContaSOL, AutoAcumulador, MAE
 from importasol.exceptions import ValidationError
+from datetime import date
 
 
 class TestAsiento(unittest.TestCase):
@@ -82,3 +83,48 @@ class TestAsiento(unittest.TestCase):
                 [ap.euros for ap in asi.apuntes])
 
 
+def auto_crea_cuentas(entorno, tipo, obj):
+    if tipo == 'APU':
+        apu = obj
+        c = apu.cuenta
+        for cue in entorno.get_tabla_elemento('MAE'):
+            if cue.cuenta == c:
+                return
+        cue = MAE()
+        cue.cuenta = c
+        cue.descripcion = "cuenta magica"
+        entorno.bind(cue)
+
+
+def solo_pyg(sal):
+    if sal.cuenta[0] not in ['6', '7']:
+        return False
+    return True
+
+
+class TestContaSOL(unittest.TestCase):
+    def test_autocierre(self):
+        e = ContaSOL()
+        e.on_bind += auto_crea_cuentas
+        ac = AutoAcumulador(e)
+        for c, importe in (('43000000', 1000), ('70000000', -1000)):
+            apu = APU(euros=importe, cuenta=c, fecha=date(2010, 2, 1), concepto="Apu a")
+            e.bind(apu)
+        for c, importe in (('41000000', -500), ('60000000', 500)):
+            apu = APU(euros=importe, cuenta=c, fecha=date(2010, 2, 2), concepto="Apu b")
+            e.bind(apu)
+        for c, importe in (('43000000', -1000), ('57000000', 1000)):
+            apu = APU(euros=importe, cuenta=c, fecha=date(2010, 3, 2), concepto="Apu c")
+            e.bind(apu)
+        for c, importe in (('41000000', 500), ('57000000', -500)):
+            apu = APU(euros=importe, cuenta=c, fecha=date(2010, 4, 2), concepto="Apu d")
+            e.bind(apu)
+        feb = e.auto_cierre(2, date(2010, 12, 31), '90000001', 'Asiento Cierre feb')
+        mar = e.auto_cierre(3, date(2010, 12, 31), '90000001', 'Asiento Cierre mar')
+        mar2 = e.auto_cierre(3, date(2010, 12, 31), '90000001', 'Asiento Cierre mar acum', acumula=True)
+        reg = e.auto_cierre('reg', date(2010, 12, 31), '12900001', 'Regularizar', selector=solo_pyg)
+        asi = reg[0]
+        self.assertEqual(-500, asi.apuntes[-1].euros)
+        asi.vincular(e)
+        cie = e.auto_cierre('cie', date(2010, 12, 31), '90000001', 'Cierre')
+        self.assertEqual(12, len(cie[0].apuntes))
