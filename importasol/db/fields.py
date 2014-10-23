@@ -183,7 +183,7 @@ class CampoV(Campo):
         self.getter = getter
         self.setter = setter
         self.parametros = parametros
-        if not 'size' in kwargs:
+        if 'size' not in kwargs:
             kwargs.update({'size': 0})
         return super(CampoV, self).__init__(nombre, **kwargs)
 
