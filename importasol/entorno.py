@@ -62,7 +62,7 @@ class EntornoSOL(object):
         elemento.bind(self)
         tabla = self.get_tabla_elemento(elemento)
         tabla.append(elemento)
-        self.on_bind.fire(tipo=elemento._meta.tabla, obj=elemento)
+        self.on_bind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
 
     def unbind(self, elemento):
         """ Desvincular un elemento de este entorno. """
@@ -72,7 +72,7 @@ class EntornoSOL(object):
         elemento.unbind()
         tabla = self.get_tabla_elemento(elemento)
         tabla.remove(elemento)
-        self.on_unbind.fire(tipo=elemento._meta.tabla, obj=elemento)
+        self.on_unbind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
 
     def create_xls(self, name):
         wb = xlwt.Workbook()
