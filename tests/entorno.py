@@ -29,4 +29,20 @@ class TestEntorno(unittest.TestCase):
         self.assertListEqual([None, None, None],
                 [ap1.entorno, ap2.entorno, ap3.entorno])
 
+    def test_eventos(self):
+        def on_bind(tipo, obj):
+            obj.manipulated = 1
 
+        def on_unbind(tipo, obj):
+            obj.manipulated = 2
+
+        e = EntornoSOL()
+        e.on_bind += on_bind
+        e.on_unbind += on_unbind
+        ap1 = APU()
+        ap1.manipulated = 0
+        ap1.euros = 1000
+        e.bind(ap1)
+        self.assertEqual(1, ap1.manipulated)
+        e.unbind(ap1)
+        self.assertEqual(ap1.manipulated, 2)

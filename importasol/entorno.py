@@ -15,6 +15,7 @@ Los objetos derivados de SOLFile quedan "vinculados" a un entorno mediante
 import logging
 import xlwt
 import os
+from .utiles import Event
 
 
 class EntornoSOL(object):
@@ -23,6 +24,8 @@ class EntornoSOL(object):
 
     def __init__(self):
         self.tablas = dict()
+        self.on_bind = Event()
+        self.on_unbind = Event()
 
     def get_tabla_elemento(self, elemento):
         """ Obtener la tabla que corresponde a este elemento. """
@@ -59,6 +62,7 @@ class EntornoSOL(object):
         elemento.bind(self)
         tabla = self.get_tabla_elemento(elemento)
         tabla.append(elemento)
+        self.on_bind.fire(tipo=elemento._meta.tabla, obj=elemento)
 
     def unbind(self, elemento):
         """ Desvincular un elemento de este entorno. """
@@ -68,6 +72,7 @@ class EntornoSOL(object):
         elemento.unbind()
         tabla = self.get_tabla_elemento(elemento)
         tabla.remove(elemento)
+        self.on_unbind.fire(tipo=elemento._meta.tabla, obj=elemento)
 
     def create_xls(self, name):
         wb = xlwt.Workbook()
