@@ -54,11 +54,11 @@ class AutoAcumulador(object):
 
     def __init__(self, entorno):
         self.entorno = entorno
-        self.saldos = {}
+        self.cuentas = {}
         entorno.on_bind += self.handle_bind
         entorno.on_unbind += self.handle_unbind
 
-    def handle_bind(self, tipo, obj):
+    def handle_bind(self, entorno, tipo, obj):
         if tipo == 'APU':
             return self.handle_bind_apu(obj)
         elif tipo == 'MAE':
@@ -66,7 +66,7 @@ class AutoAcumulador(object):
         else:
             return None
 
-    def handle_unbind(self, tipo, obj):
+    def handle_unbind(self, entorno, tipo, obj):
         if tipo == 'APU':
             return self.handle_unbind_apu(obj)
         elif tipo == 'MAE':
@@ -78,8 +78,8 @@ class AutoAcumulador(object):
         afectadas = []
         for i in range(0, len(cuenta)+1):
             c = cuenta[:i]
-            if c in self.saldos:
-                afectadas.append(self.saldos.get(c))
+            if c in self.cuentas.keys():
+                afectadas.append(c)
         return afectadas
 
     def sumar(self, sal, apu, valor=1):
@@ -96,22 +96,38 @@ class AutoAcumulador(object):
         ch.from_valor(sal, haber_ahora + haber)
 
     def handle_bind_apu(self, apu):
-        sals = self.detectar_afectadas(apu.cuenta)
-        for s in sals:
+        afectadas = self.detectar_afectadas(apu.cuenta)
+        for a in afectadas:
+            diario = apu._meta.fields['cA'].get_valor(apu)
+            s = self.get_sal(diario, a)
             self.sumar(s, apu)
 
     def handle_unbind_apu(self, apu):
-        sals = self.detectar_afectadas(apu.cuenta)
-        for s in sals:
+        afectadas = self.detectar_afectadas(apu.cuenta)
+        for a in afectadas:
+            diario = apu._meta.fields['cA'].get_valor(apu)
+            s = self.get_sal(diario, a)
             self.sumar(s, apu, -1)
 
+    def get_sal(self, diario, cuenta):
+        if cuenta not in self.cuentas:
+            return None
+        v = self.cuentas[cuenta]
+        if diario not in v.keys():
+            s = SAL()
+            s.cA = cuenta
+            s.diario = diario
+            self.entorno.bind(s)
+            v[diario] = s
+        return v[diario]
+
     def handle_bind_mae(self, mae):
-        s = SAL()
-        s.cA = mae.cuenta
-        self.saldos[mae.cuenta] = s
+        self.cuentas[mae.cuenta] = {}
 
     def handle_unbind_mae(self, mae):
-        self.saldos.pop(mae.cuenta)
+        s = self.cuentas.pop(mae.cuenta)
+        for sal in s.values():
+            self.entorno.unbind(sal)
 
 
 class SAL(SOLFile):
@@ -126,4 +142,7 @@ class SAL(SOLFile):
         return u'SAL(%s)' % self.cuenta
 
     __repr__ = __str__
+
+    class Meta:
+        tabla = 'SAL'
 
