@@ -2,8 +2,9 @@ import unittest
 from decimal import Decimal
 from importasol.db import fields
 from importasol.db.base import SOLFile
-from importasol.exceptions import ValidationError
+from importasol import exceptions
 from importasol.entorno import EntornoSOL
+
 
 class CCFile(SOLFile):
     cA = fields.CampoCuenta("Cuenta", size=15)
@@ -20,7 +21,7 @@ class CCFile(SOLFile):
 
 class TestCampoCuenta(unittest.TestCase):
     def test_campocuenta(self):
-        e = EntornoSol()
+        e = EntornoSOL()
         e.nivel_pgc = 8
         c = CCFile()
         c.cuenta = '43.0'
