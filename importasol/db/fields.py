@@ -274,8 +274,9 @@ class CampoDebeHaber(CampoV):
         campo_debe.contribute_to_class(cls, campo_debe.nombre)
         campo_haber.contribute_to_class(cls, campo_haber.nombre)
 
-        campo_debe.crear_alias(cls, '%s_debe' % field_name)
-        campo_haber.crear_alias(cls, '%s_haber' % field_name)
+        if self.auto_alias:
+            campo_debe.crear_alias(cls, '%s_debe' % field_name)
+            campo_haber.crear_alias(cls, '%s_haber' % field_name)
 
         self.campo_debe = campo_debe
         self.campo_haber = campo_haber
