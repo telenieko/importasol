@@ -65,5 +65,26 @@ class CLI(SOLFile):
         t = u"CLI(%s, %s)" % (self.cA, self.cD)
         return t
 
+    @classmethod
+    def from_cli(cls, cli):
+        """ Crea una instancia de CLI usando datos obtenidos del MDB de SOL. """
+        s = cls()
+        for src, campo in (('codcli', 'codigo'), ('nofcli', 'nombre_fiscal'),
+                           ('noccli', 'nombre_comercial'), ('domcli', 'domicilio'),
+                           ('pobcli', 'poblacion'), ('cpocli', 'codigo_postal'),
+                           ('procli', 'provincia'), ('nifcli', 'nif'),
+                           ('tivcli', 'tipo_de_iva'), ('agecli', 'agente'),
+                           ('telcli', 'telefono'), ('faxcli', 'fax'), ('movcli', 'movil'),
+                           ('bancli', 'banco'), ('entcli', 'entidad'), ('oficli', 'oficina'),
+                           ('dcocli', 'dc'), ('cuecli', 'cuenta'), ('fpacli', 'cU'),
+                           ('tclcli', 'cV'), ('ivacli', 'aplicar_iva'),
+                           ('falcli', 'cAB'), ('emacli', 'cAD'), ('webcli', 'cAE'),
+                           ('obscli', 'observaciones'), ('nvccli', 'no_vender'),
+                           ('nfccli', 'no_facturar'), ('niccli', 'no_imprimir'),
+                           ('paicli', 'pais'), ('swfcli', 'cAR'), ('swicli', 'cAS'),
+                           ('estcli', 'estado')):
+                setattr(s, campo, cli.get(src))
+        return s
+
     __str__ = __unicode__
     __repr__ = __unicode__
