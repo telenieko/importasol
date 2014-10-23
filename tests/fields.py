@@ -2,8 +2,7 @@ import unittest
 from decimal import Decimal
 from importasol.db import fields
 from importasol.db.base import SOLFile
-from importasol.db.contasol.apu import get_en_pesetas, get_euros, set_euros
-from importasol.db.contasol.sal import CampoSaldo
+from importasol.db.contasol.apu import get_en_pesetas
 from importasol.exceptions import ValidationError
 
 
@@ -13,8 +12,8 @@ class TestFile(SOLFile):
     cC = fields.CampoV("Pesetas", size=15, getter=get_en_pesetas, parametros=('euros', ))
     cD = fields.CampoA("Texto", size=5, truncate=True)
     cE = fields.CampoA("Text2", size=5, truncate=False)
-    saldo = CampoSaldo("apertura", 'F', 'G')
-    euros = fields.CampoV('Euros', getter=get_euros, setter=set_euros, parametros=('cA', 'cB'))
+    saldo = fields.CampoDebeHaber("apertura", 'F', 'G')
+    euros = fields.CampoDebeHaber('Euros', 'A', 'B', editable=True)
 
     class Meta:
         tabla = 'TST'
@@ -49,19 +48,6 @@ class TestCampoVirtual(unittest.TestCase):
         tf.cB = 100
         self.assertEqual(Decimal('-16638.6'), tf.cC)
 
-    def test_campo_euro(self):
-        tf = TestFile()
-        self.assertEqual(0, tf.euros)
-        tf.euros = 1000
-        self.assertEqual(1000, tf.cA)
-        self.assertEqual(None, tf.cB)
-        tf.euros = -100
-        self.assertEqual(None, tf.cA)
-        self.assertEqual(100, tf.cB)
-        tf.euros = 0
-        self.assertEqual(None, tf.cA)
-        self.assertEqual(None, tf.cB)
-
     def test_dos_no_son_lo_mismo(self):
         tf1 = TestFile()
         tf2 = TestFile()
@@ -85,8 +71,8 @@ class TestCampoAlias(unittest.TestCase):
         self.assertEqual("Hola", tf.cD)
 
 
-class TestCampoSaldo(unittest.TestCase):
-    def test_campo_saldo(self):
+class TestCampoDebeHaber(unittest.TestCase):
+    def test_campo_debe_haber(self):
         tf = TestFile()
         attrs = dir(tf)
         for a in ['saldo_debe', 'cF', 'saldo_haber', 'cG']:
@@ -94,3 +80,16 @@ class TestCampoSaldo(unittest.TestCase):
         tf.saldo_debe = 100
         tf.saldo_haber = 150
         self.assertEqual(tf.saldo, -50)
+
+    def test_campo_euro(self):
+        tf = TestFile()
+        self.assertEqual(0, tf.euros)
+        tf.euros = 1000
+        self.assertEqual(1000, tf.cA)
+        self.assertEqual(None, tf.cB)
+        tf.euros = -100
+        self.assertEqual(None, tf.cA)
+        self.assertEqual(100, tf.cB)
+        tf.euros = 0
+        self.assertEqual(None, tf.cA)
+        self.assertEqual(None, tf.cB)
