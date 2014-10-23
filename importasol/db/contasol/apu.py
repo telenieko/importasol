@@ -39,8 +39,10 @@ class APU(SOLFile):
 
     def __unicode__(self):
         con = self.concepto and self.concepto[:40] or None
-        return u"APU(%s: %s:%10s %s > %s)" % \
-               (self.asiento, self.orden, self.cuenta, self.euros, con)
+        return u"APU(%s %s,%s: %s:%10s %s > %s)" % \
+               (self.fecha.strftime('%Y-%m-%d'),
+                self.diario, self.asiento, self.orden,
+                self.cuenta, self.euros, con)
 
     __str__ = __unicode__
     __repr__ = __unicode__
