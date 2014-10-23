@@ -84,6 +84,20 @@ class SOLFileBase(type):
         else:
             setattr(cls, name, value)
 
+    def __call__(self, *args, **kwargs):
+        obj = super(SOLFileBase, self).__call__()
+        for name, field in obj._meta.fields.iteritems():
+            if name not in kwargs and field.default:
+                val = None
+                if callable(field.default):
+                    val = field.default(obj)
+                else:
+                    val = field.default
+                setattr(obj, name, val)
+        for k, v in kwargs.items():
+            setattr(obj, k, v)
+        return obj
+
 
 class SOLFile(object):
     __metaclass__ = SOLFileBase
