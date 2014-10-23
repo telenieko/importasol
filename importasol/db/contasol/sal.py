@@ -1,6 +1,7 @@
 from ..base import SOLFile
 from ..fields import CampoCuenta, CampoDebeHaber, Campo, CampoN
 from ...utiles import num_to_col_letters, col2num
+from decimal import Decimal
 
 
 class CreadorSaldos(Campo):
@@ -10,17 +11,15 @@ class CreadorSaldos(Campo):
     Este "campo" simplemente crea de golpe los campos de saldos de
     todos los meses de forma mas rapida que escribirlos todos a mano...
     """
-    columnas = {}
-
     def __init__(self, nombre, inicial, **kwargs):
         self.inicial = inicial
-        self.columnas = {}
+        self.columnas_euro = {}
         super(CreadorSaldos, self).__init__(nombre, size=None, **kwargs)
 
     def crea_campo(self, cls, nombre, cd, ch, field_name):
         cd = num_to_col_letters(cd)
         ch = num_to_col_letters(ch)
-        c = CampoDebeHaber(nombre, cd, ch, auto_alias=False)
+        c = CampoDebeHaber(nombre, cd, ch, default=Decimal(0), auto_alias=False)
         c.contribute_to_class(cls, field_name)
         return c
 
@@ -35,17 +34,96 @@ class CreadorSaldos(Campo):
             cd = columna + i*2
             ch = columna + i*2 + 1
             col = self.crea_campo(cls, "Saldo %d" % mes, cd, ch, "%s_%d" % (field_name, mes))
-            self.columnas.update({mes: col})
+            self.columnas_euro.update({mes: col})
         columna += 24
         reg = self.crea_campo(cls, "Regularizacion %s" % self.nombre,
                               columna, columna+1, '%s_reg' % field_name)
         columna += 2
         cie = self.crea_campo(cls, "Cierre %s" % self.nombre,
                               columna, columna+1, '%s_reg' % field_name)
-        self.columnas.update({'ape': ad, 'reg': reg, 'cie': cie})
+        self.columnas_euro.update({'ape': ad, 'reg': reg, 'cie': cie})
+
+
+class AutoAcumulador(object):
+
+    """ AutoAcumulador mantiene la tabla SAL sincronizada con la APU de un EntornoSOL.
+
+    Si vinculamos un AutoAcumulador a un EntornoSOL este estara atentos a los (un)bind()
+    manteniendo los saldos mensuales actualizados en todo momento.
+    """
+
+    def __init__(self, entorno):
+        self.entorno = entorno
+        self.saldos = {}
+        entorno.on_bind += self.handle_bind
+        entorno.on_unbind += self.handle_unbind
+
+    def handle_bind(self, tipo, obj):
+        if tipo == 'APU':
+            return self.handle_bind_apu(obj)
+        elif tipo == 'MAE':
+            return self.handle_bind_mae(obj)
+        else:
+            return None
+
+    def handle_unbind(self, tipo, obj):
+        if tipo == 'APU':
+            return self.handle_unbind_apu(obj)
+        elif tipo == 'MAE':
+            return self.handle_unbind_mae(obj)
+        else:
+            return None
+
+    def detectar_afectadas(self, cuenta):
+        afectadas = []
+        for i in range(0, len(cuenta)+1):
+            c = cuenta[:i]
+            if c in self.saldos:
+                afectadas.append(self.saldos.get(c))
+        return afectadas
+
+    def sumar(self, sal, apu, valor=1):
+        debe = (apu.debe or 0) * valor
+        haber = (apu.haber or 0) * valor
+        mes = apu.fecha.month
+        campo = 'euros_%d' % mes
+        field = SAL._meta.fields.get(campo)
+        cd = field.campo_debe
+        ch = field.campo_haber
+        debe_ahora = cd.get_valor(sal) or 0
+        haber_ahora = ch.get_valor(sal) or 0
+        cd.from_valor(sal, debe_ahora + debe)
+        ch.from_valor(sal, haber_ahora + haber)
+
+    def handle_bind_apu(self, apu):
+        sals = self.detectar_afectadas(apu.cuenta)
+        for s in sals:
+            self.sumar(s, apu)
+
+    def handle_unbind_apu(self, apu):
+        sals = self.detectar_afectadas(apu.cuenta)
+        for s in sals:
+            self.sumar(s, apu, -1)
+
+    def handle_bind_mae(self, mae):
+        s = SAL()
+        s.cA = mae.cuenta
+        self.saldos[mae.cuenta] = s
+
+    def handle_unbind_mae(self, mae):
+        self.saldos.pop(mae.cuenta)
 
 
 class SAL(SOLFile):
     cA = CampoCuenta("Cuenta", size=10)
     euros = CreadorSaldos("euros", 'AF')
     cBJ = CampoN("Diario", size=3)
+
+    def __str__(self):
+        return unicode(self)
+
+    def __unicode__(self):
+        return u'SAL(%s)' % self.cuenta
+
+    __repr__ = __str__
+

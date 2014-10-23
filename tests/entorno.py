@@ -4,6 +4,7 @@ from importasol.entorno import EntornoSOL
 from .fields import TestFile
 from importasol.db.contasol import APU, Asiento
 
+
 class TestEntorno(unittest.TestCase):
     def test_entorno(self):
         e = EntornoSOL()
