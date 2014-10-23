@@ -174,6 +174,23 @@ class CampoAlias(object):
 
 
 class CampoV(Campo):
+
+    """ CampoV, un campo virtual que obtiene su valor a partir de un metodo.
+
+    El campo acepta un metodo ``getter`` y un ``setter`` parecidos a los de
+    property(). El parametro ``parametros`` permite pasar parametros fijos
+    al getter y el setter cuando se usen.
+
+    Ejemplo:
+        from importasol.contasol.apu import get_euros, set_euros
+        euros = fields.CampoV('Euros', getter=get_euros, setter=set_euros,
+                              parametros=('cA', 'cB'))
+
+    Cuando leemos ``euros`` nos devuelve la suma de debe + haber (columnas A y B,
+    de ahi los parametros). Cuando cambiamos su valor se guarda en A o B segun el
+    signo.
+    """
+
     getter = None
     setter = None
     parametros = None
