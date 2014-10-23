@@ -33,11 +33,6 @@ class Campo(object):
             raise ProgrammingError(
                 "%s tiene que estar enlazado a un entorno" % obj)
         val = getattr(obj, self.field_name)
-        if not val and self.default:
-            if callable(self.default):
-                return self.default(obj)
-            else:
-                return self.default
         return val
 
     def from_valor(self, obj, value):
