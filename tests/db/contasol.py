@@ -104,6 +104,15 @@ def solo_pyg(entorno, sal):
 
 
 class TestContaSOL(unittest.TestCase):
+    def test_numerador(self):
+        e = ContaSOL(primer_asiento=10, autonumerar=True)
+        apu = APU(euros=5, cuenta='4', fecha=date(2010, 2, 1), concepto="Apu a")
+        e.bind(apu)
+        self.assertEqual(10, apu.asiento)
+        apu = APU(euros=5, cuenta='4', fecha=date(2010, 2, 1), concepto="Apu a")
+        e.bind(apu)
+        self.assertEqual(11, apu.asiento)
+
     def test_autocierre(self):
         e = ContaSOL()
         e.on_pre_bind += auto_crea_cuentas

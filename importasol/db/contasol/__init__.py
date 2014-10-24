@@ -6,7 +6,41 @@ from .sal import SAL, AutoAcumulador
 from ...entorno import EntornoSOL
 
 
+class ContadorAsientos(object):
+    def __init__(self, entorno, initial, autonumerar):
+        self.entorno = entorno
+        self.actual = initial
+        self.automatico = autonumerar
+        entorno.on_pre_bind += self.handle_bind
+
+    def next(self):
+        self.actual += 1
+        return self.actual
+
+    def handle_bind(self, entorno, tipo, obj):
+        if tipo != 'APU':
+            return
+        apu = obj
+        if apu.asiento and apu.asiento > self.actual:
+            self.actual = apu.asiento
+        elif not apu.asiento and self.automatico:
+            apu.asiento = self.next()
+
+    def recalcular(self):
+        apus = self.entorno.get_tabla_elemento('APU')
+        num = 0
+        for apu in apus:
+            if apu.asiento and apu.asiento > num:
+                num = apu.asiento
+        self.actual = num
+        return num
+
+
 class ContaSOL(EntornoSOL):
+    def __init__(self, primer_asiento=0, autonumerar=False):
+        super(ContaSOL, self).__init__()
+        self.asinum = ContadorAsientos(self, initial=primer_asiento-1, autonumerar=autonumerar)
+
     def auto_cierre(self, saldo, fecha, contrapartida, texto, acumula=False, selector=None):
         """ Asiento de cierre automatico.
 
