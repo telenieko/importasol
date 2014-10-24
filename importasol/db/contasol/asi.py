@@ -19,9 +19,10 @@ class Asiento():
         for a in self.apuntes:
             a.asiento = val
         self._numero = val
+    numero = property(_get_numero, _set_numero)
 
     def __init__(self, numero=None, apuntes=None):
-        self.numero = numero
+        self._numero = numero
         self.apuntes = []
         if apuntes:
             for apu in apuntes:
@@ -62,7 +63,9 @@ class Asiento():
             apu.orden = i
             i += 1
 
-    def vincular(self, entorno):
+    def vincular(self, entorno, autonum=False):
+        if autonum:
+            self._set_numero(entorno.asinum.next())
         for apu in self.apuntes:
             entorno.bind(apu)
 

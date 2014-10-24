@@ -23,8 +23,6 @@ class ContadorAsientos(object):
         apu = obj
         if apu.asiento and apu.asiento > self.actual:
             self.actual = apu.asiento
-        elif not apu.asiento and self.automatico:
-            apu.asiento = self.next()
 
     def recalcular(self):
         apus = self.entorno.get_tabla_elemento('APU')
