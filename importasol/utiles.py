@@ -59,6 +59,17 @@ def dict_factory(cursor, row):
     return d
 
 
+def print_diario(apus):
+    # Imprimir una serie de apuntes en formato tabular
+    for apu in apus:
+        r = "{fecha!s} {diario!s:>3} {asiento:>5d}:{orden:>02d}   "
+        r += "{cuenta} {debe:>10.2f} {haber:>10.2f} {concepto}"
+        s = r.format(fecha=apu.fecha, diario=apu.diario, asiento=apu.asiento or 0,
+                     orden=apu.orden or 0, cuenta=apu.cuenta, debe=apu.debe or 0,
+                     haber=apu.haber or 0, concepto=apu.concepto[:15])
+        print(s)
+
+
 class Event:
     # http://stackoverflow.com/a/1096614/1819160
     def __init__(self):

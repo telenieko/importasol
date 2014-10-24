@@ -24,8 +24,10 @@ class EntornoSOL(object):
 
     def __init__(self):
         self.tablas = dict()
-        self.on_bind = Event()
-        self.on_unbind = Event()
+        self.on_pre_bind = Event()
+        self.on_pre_unbind = Event()
+        self.on_post_bind = Event()
+        self.on_post_unbind = Event()
 
     def get_tabla_elemento(self, elemento):
         """ Obtener la tabla que corresponde a este elemento. """
@@ -59,20 +61,22 @@ class EntornoSOL(object):
             if elemento.entorno == self:
                 raise ValueError("El elemento ya esta vinculado a este entorno")
             elemento.entorno.unbind(elemento)
+        self.on_pre_bind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
         elemento.bind(self)
         tabla = self.get_tabla_elemento(elemento)
         tabla.append(elemento)
-        self.on_bind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
+        self.on_post_bind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
 
     def unbind(self, elemento):
         """ Desvincular un elemento de este entorno. """
         tabla = self.get_tabla_elemento(elemento)
         if elemento not in tabla:
             raise ValueError("No puedo desvincular un elemento que no esta vinculado a mi!")
+        self.on_pre_unbind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
         elemento.unbind()
         tabla = self.get_tabla_elemento(elemento)
         tabla.remove(elemento)
-        self.on_unbind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
+        self.on_post_unbind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
 
     def create_xls(self, name):
         wb = xlwt.Workbook()

@@ -5,6 +5,7 @@ from importasol.db.base import SOLFile
 from importasol.db import contasol
 from importasol.db.contasol import APU, Asiento, ContaSOL, AutoAcumulador, MAE
 from importasol.exceptions import ValidationError
+from importasol.utiles import print_diario
 from datetime import date
 
 
@@ -96,7 +97,7 @@ def auto_crea_cuentas(entorno, tipo, obj):
         entorno.bind(cue)
 
 
-def solo_pyg(sal):
+def solo_pyg(entorno, sal):
     if sal.cuenta[0] not in ['6', '7']:
         return False
     return True
@@ -105,8 +106,8 @@ def solo_pyg(sal):
 class TestContaSOL(unittest.TestCase):
     def test_autocierre(self):
         e = ContaSOL()
-        e.on_bind += auto_crea_cuentas
-        ac = AutoAcumulador(e)
+        e.on_pre_bind += auto_crea_cuentas
+        AutoAcumulador(e)
         for c, importe in (('43000000', 1000), ('70000000', -1000)):
             apu = APU(euros=importe, cuenta=c, fecha=date(2010, 2, 1), concepto="Apu a")
             e.bind(apu)
@@ -119,12 +120,12 @@ class TestContaSOL(unittest.TestCase):
         for c, importe in (('41000000', 500), ('57000000', -500)):
             apu = APU(euros=importe, cuenta=c, fecha=date(2010, 4, 2), concepto="Apu d")
             e.bind(apu)
-        feb = e.auto_cierre(2, date(2010, 12, 31), '90000001', 'Asiento Cierre feb')
-        mar = e.auto_cierre(3, date(2010, 12, 31), '90000001', 'Asiento Cierre mar')
-        mar2 = e.auto_cierre(3, date(2010, 12, 31), '90000001', 'Asiento Cierre mar acum', acumula=True)
+        print_diario(e.get_tabla_elemento('APU'))
         reg = e.auto_cierre('reg', date(2010, 12, 31), '12900001', 'Regularizar', selector=solo_pyg)
         asi = reg[0]
         self.assertEqual(-500, asi.apuntes[-1].euros)
         asi.vincular(e)
         cie = e.auto_cierre('cie', date(2010, 12, 31), '90000001', 'Cierre')
-        self.assertEqual(12, len(cie[0].apuntes))
+        self.assertEqual(2, len(cie[0].apuntes))
+        cie[0].vincular(e)
+        print_diario(e.get_tabla_elemento('APU'))
