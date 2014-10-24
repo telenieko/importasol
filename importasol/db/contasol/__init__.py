@@ -47,42 +47,38 @@ class ContaSOL(EntornoSOL):
             for m in meses:
                 d = int(s.diario)
                 if d not in diarios:
-                    diarios[d] = {'suma': 0, 'asiento': Asiento()}
+                    diarios[d] = {'suma': 0, 'asiento': Asiento(), 'cuentas': {}}
+                cuentas = diarios[d]['cuentas']
                 suma = diarios[d]['suma']
                 asi = diarios[d]['asiento']
+                if s.cuenta not in cuentas:
+                    cuentas[s.cuenta] = 0
                 field = s._meta.fields.get('euros_%s' % m)
-                debe = field.campo_debe.get_valor(s)
-                haber = field.campo_haber.get_valor(s)
-                if debe:
-                    apu = APU()
-                    apu.fecha = fecha
-                    apu.diario = s.diario
-                    apu.concepto = texto
-                    apu.cuenta = s.cuenta
-                    apu.haber = debe
-                    asi.add(apu)
-                    suma += debe
-                if haber:
-                    apu = APU()
-                    apu.fecha = fecha
-                    apu.diario = s.diario
-                    apu.concepto = texto
-                    apu.cuenta = s.cuenta
-                    apu.debe = haber
-                    suma -= haber
-                    asi.add(apu)
+                saldo = field.get_valor(s)
+                cuentas[s.cuenta] += saldo
+                suma += saldo
                 diarios[d]['suma'] = suma
-                diarios[d]['asiento'] = asi
         for k, v in diarios.iteritems():
             suma = v['suma']
             asi = v['asiento']
-            apu = APU()
-            apu.fecha = fecha
-            apu.diario = k
-            apu.concepto = texto
-            apu.cuenta = contrapartida
-            apu.euros = suma
-            asi.add(apu)
+            for cuenta, saldo in v['cuentas'].iteritems():
+                if saldo == 0:
+                    continue
+                apu = APU()
+                apu.fecha = fecha
+                apu.diario = s.diario
+                apu.concepto = texto
+                apu.cuenta = cuenta
+                apu.euros = saldo * -1
+                asi.add(apu)
+            if suma:
+                apu = APU()
+                apu.fecha = fecha
+                apu.diario = k
+                apu.concepto = texto
+                apu.cuenta = contrapartida
+                apu.euros = suma
+                asi.add(apu)
         return [v['asiento'] for v in diarios.values()]
 
 
