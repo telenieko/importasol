@@ -39,8 +39,11 @@ class ContaSOL(EntornoSOL):
         for s in self.get_tabla_elemento('SAL'):
             if len(s.cuenta) != self.nivel_pgc:
                 continue
-            if selector and not selector(s):
-                continue
+            if selector:
+                if callable(selector) and not selector(self, s):
+                    continue
+                elif isinstance(selector, list) and s.cuenta not in selector:
+                    continue
             for m in meses:
                 d = int(s.diario)
                 if d not in diarios:
