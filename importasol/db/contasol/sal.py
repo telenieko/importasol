@@ -55,8 +55,8 @@ class AutoAcumulador(object):
     def __init__(self, entorno):
         self.entorno = entorno
         self.cuentas = {}
-        entorno.on_bind += self.handle_bind
-        entorno.on_unbind += self.handle_unbind
+        entorno.on_pre_bind += self.handle_bind
+        entorno.on_pre_unbind += self.handle_unbind
 
     def handle_bind(self, entorno, tipo, obj):
         if tipo == 'APU':
