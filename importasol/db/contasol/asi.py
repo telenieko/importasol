@@ -69,3 +69,12 @@ class Asiento():
     def desvincular(self):
         for apu in self.apuntes:
             apu.entorno.unbind(apu)
+
+    def copy(self, invertido=False):
+        nuevo = self.__class__()
+        for apu in self.apuntes:
+            ap = apu.copy()
+            if invertido:
+                ap.euros = ap.euros * -1
+            nuevo.add(ap)
+        return nuevo
