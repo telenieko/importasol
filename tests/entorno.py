@@ -31,15 +31,15 @@ class TestEntorno(unittest.TestCase):
                 [ap1.entorno, ap2.entorno, ap3.entorno])
 
     def test_eventos(self):
-        def on_bind(tipo, obj):
+        def on_bind(tipo, entorno, obj):
             obj.manipulated = 1
 
-        def on_unbind(tipo, obj):
+        def on_unbind(tipo, entorno, obj):
             obj.manipulated = 2
 
         e = EntornoSOL()
-        e.on_bind += on_bind
-        e.on_unbind += on_unbind
+        e.on_pre_bind += on_bind
+        e.on_pre_unbind += on_unbind
         ap1 = APU()
         ap1.manipulated = 0
         ap1.euros = 1000
