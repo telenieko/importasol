@@ -59,7 +59,7 @@ class CLI(SOLFile):
 
     class Meta:
         tabla = 'CLI'
-        aliases = (('cD', 'nombre'), )
+        aliases = (('nombre', 'cD'), )
 
     def __unicode__(self):
         t = u"CLI(%s, %s)" % (self.cA, self.cD)
@@ -82,7 +82,7 @@ class CLI(SOLFile):
                            ('obscli', 'observaciones'), ('nvccli', 'no_vender'),
                            ('nfccli', 'no_facturar'), ('niccli', 'no_imprimir'),
                            ('paicli', 'pais'), ('swfcli', 'cAR'), ('swicli', 'cAS'),
-                           ('estcli', 'estado')):
+                           ('estcli', 'estado'), ('dp1cli', 'cDV')):
                 setattr(s, campo, cli.get(src))
         return s
 

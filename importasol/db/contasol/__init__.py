@@ -4,13 +4,15 @@ from .asi import Asiento
 from .iva import IVS, IVR
 from .sal import SAL, AutoAcumulador
 from ...entorno import EntornoSOL
+import logging
+
+log = logging.getLogger('importasol.db.contasol')
 
 
 class ContadorAsientos(object):
-    def __init__(self, entorno, initial, autonumerar):
+    def __init__(self, entorno, initial):
         self.entorno = entorno
         self.actual = initial
-        self.automatico = autonumerar
         entorno.on_pre_bind += self.handle_bind
 
     def next(self):
@@ -35,9 +37,9 @@ class ContadorAsientos(object):
 
 
 class ContaSOL(EntornoSOL):
-    def __init__(self, primer_asiento=0, autonumerar=False):
+    def __init__(self, primer_asiento=1):
         super(ContaSOL, self).__init__()
-        self.asinum = ContadorAsientos(self, initial=primer_asiento-1, autonumerar=autonumerar)
+        self.asinum = ContadorAsientos(self, initial=primer_asiento-1)
 
     def auto_cierre(self, saldo, fecha, contrapartida, texto, acumula=False, selector=None):
         """ Asiento de cierre automatico.
@@ -68,14 +70,20 @@ class ContaSOL(EntornoSOL):
             meses = meses + [str(m) for m in range(1, 13)]
             if saldo == 'cie':
                 meses = meses + ['reg', ]
+        log.debug("""ContaSOL.autocierre(%s, %s, %s, '%s', %s) meses=(%s), selector=(%s)""" %
+                  (saldo, fecha, contrapartida, texto, acumula, meses, selector))
         for s in self.get_tabla_elemento('SAL'):
             if len(s.cuenta) != self.nivel_pgc:
                 continue
-            if selector:
-                if callable(selector) and not selector(self, s):
-                    continue
-                elif isinstance(selector, list) and s.cuenta not in selector:
-                    continue
+            if selector is not None:
+                if callable(selector):
+                    if not selector(self, s):
+                        continue
+                elif isinstance(selector, list):
+                    if s.cuenta not in selector:
+                        continue
+                else:
+                    raise ValueError("No se trabajar con un selector de tipo %s" % type(selector))
             for m in meses:
                 d = int(s.diario)
                 if d not in diarios:

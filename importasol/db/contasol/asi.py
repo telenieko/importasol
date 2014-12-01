@@ -14,12 +14,12 @@ class Asiento():
 
     def _get_numero(self):
         return self._numero
+    numero = property(_get_numero)
 
-    def _set_numero(self, val):
+    def set_numero(self, val):
         for a in self.apuntes:
             a.asiento = val
         self._numero = val
-    numero = property(_get_numero, _set_numero)
 
     def __init__(self, numero=None, apuntes=None):
         self._numero = numero
@@ -65,7 +65,8 @@ class Asiento():
 
     def vincular(self, entorno, autonum=False):
         if autonum:
-            self._set_numero(entorno.asinum.next())
+            self.set_numero(entorno.asinum.next())
+            self.renumera()
         for apu in self.apuntes:
             entorno.bind(apu)
 

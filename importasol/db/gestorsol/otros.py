@@ -53,6 +53,7 @@ class AGE(SOLFile):
 
     cA = CampoA("Codigo", size=3, truncate=False)
     cB = CampoA("Nombre", size=100)
+    cL = CampoND("Comision", size=5)
 
     class Meta:
         tabla = 'AGE'
