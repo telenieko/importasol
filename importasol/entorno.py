@@ -83,22 +83,32 @@ class EntornoSOL(object):
         ws = wb.add_sheet(name)
         return wb, ws
 
+    def generar_xls_table(self, table, output):
+        """ Generar el XLS de una tabla y escribirlo en ``output``.
+
+        output puede ser un nombre de archivo o un objeto que implemente
+        el metodo write.
+        """
+        wb, ws = self.create_xls(table)
+        rowno = 0
+        for row in self.tablas[table]:
+            # if rowno == 0:
+                # row.__class__.to_xls_header(0, ws)
+                # rowno = 1
+            try:
+                row.to_xls(rowno, ws)
+            except:
+                logging.error("Error procesando tabla %s" % table)
+                raise
+            rowno += 1
+        wb.save(output)
+        return wb
+
     def generar_xls(self, outdir):
         """ Generar los archivos XLS de cada tabla dentro de la carpeta ``outdir``. """
-        for name, rows in self.tablas.iteritems():
+        for name in self.tablas.iterkeys():
             logging.info("Voy a procesar la tabla %s" % name)
-            wb, ws = self.create_xls(name)
             fname = os.path.join(outdir, '%s.xls' % name)
-            rowno = 0
-            for row in rows:
-                # if rowno == 0:
-                    # row.__class__.to_xls_header(0, ws)
-                    # rowno = 1
-                try:
-                    row.to_xls(rowno, ws)
-                except:
-                    logging.error("Error procesando tabla %s" % name)
-                    raise
-                rowno += 1
-            wb.save(fname)
+            self.generar_xls_table(name, fname)
             logging.info("Tabla %s exportada" % name)
+

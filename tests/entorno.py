@@ -3,6 +3,7 @@ from decimal import Decimal
 from importasol.entorno import EntornoSOL
 from .fields import TestFile
 from importasol.db.contasol import APU, Asiento
+from StringIO import StringIO
 
 
 class TestEntorno(unittest.TestCase):
@@ -47,3 +48,17 @@ class TestEntorno(unittest.TestCase):
         self.assertEqual(1, ap1.manipulated)
         e.unbind(ap1)
         self.assertEqual(ap1.manipulated, 2)
+
+    def test_generacion_xls(self):
+        e = EntornoSOL()
+        ap1 = APU()
+        ap1.euros = 1000
+        ap2 = APU()
+        ap2.euros = -500
+        ap3 = APU()
+        ap3.euros = -500
+        asi = Asiento(apuntes=[ap1, ap2, ap3])
+        asi.vincular(e)
+        f = StringIO()
+        e.generar_xls_table('APU', f)
+
