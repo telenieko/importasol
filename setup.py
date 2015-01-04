@@ -1,8 +1,6 @@
 """ setup.py file. """
 import os
 from setuptools import setup
-from pip.req import parse_requirements
-
 
 def read(fname):
     """ Utility function to read the README file.
@@ -11,9 +9,6 @@ def read(fname):
     string in below ...
     """
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
-install_reqs = parse_requirements('requirements.txt')
-reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name="importasol",
@@ -32,5 +27,7 @@ setup(
         "Topic :: Utilities",
         "License :: OSI Approved :: BSD License",
     ],
-    install_requires=reqs
+    install_requires=[
+        "xlwt==0.7.5",
+    ]
 )
