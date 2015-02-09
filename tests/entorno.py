@@ -1,7 +1,7 @@
 import unittest
 from decimal import Decimal
 from importasol.entorno import EntornoSOL
-from .fields import TestFile
+from fields import TestFile
 from importasol.db.contasol import APU, Asiento
 from StringIO import StringIO
 
