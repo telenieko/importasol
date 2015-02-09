@@ -1,7 +1,7 @@
 import inspect
 from .fields import CampoAlias
 from ..utiles import col2num
-
+from operator import attrgetter
 
 class Options(object):
     aliases = None
@@ -11,6 +11,7 @@ class Options(object):
     object_name = None
     model_name = None
     fields = None
+    sort_by = None
 
     def __init__(self, meta, app_label=None, table_name=None):
         self.model = None
@@ -137,6 +138,21 @@ class SOLFile(object):
                 logging.exception("Error con linea:%s, column: %s, valor:%s tabla: %s" % (
                     rowno, name, val, self._meta.table_name))
                 raise
+
+    @classmethod
+    def sort_table(cls, table):
+        """
+        :param table: una tabla de SOLFile, normalmente obtenida con get_tabla_elemento
+        :return: la misma tabla, ordenada
+        """
+        if len(table) <= 1:
+            return table
+        el = table[0]
+        sort_by = el._meta.sort_by
+        if sort_by:
+            return table.sort(key=attrgetter(*sort_by))
+        else:
+            return table
 
     @classmethod
     def to_xls_header(cls, rowno, ws):

@@ -36,6 +36,7 @@ class APU(SOLFile):
     class Meta:
         tabla = 'APU'
         aliases = (('dpto', 'O'), ('subdpto', 'P'))
+        sort_by = ('fecha', 'asiento', 'orden')
 
     def __unicode__(self):
         con = self.concepto and self.concepto[:40] or None

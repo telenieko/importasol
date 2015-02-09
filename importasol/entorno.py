@@ -78,6 +78,13 @@ class EntornoSOL(object):
         tabla.remove(elemento)
         self.on_post_unbind.fire(entorno=self, tipo=elemento._meta.tabla, obj=elemento)
 
+    def sort_all(self):
+        for table in self.tablas.itervalues():
+            if len(table) <= 1:
+                continue
+            el = table[0]
+            el.__class__.sort_table(table)
+
     def create_xls(self, name):
         wb = xlwt.Workbook()
         ws = wb.add_sheet(name)
@@ -106,6 +113,7 @@ class EntornoSOL(object):
 
     def generar_xls(self, outdir):
         """ Generar los archivos XLS de cada tabla dentro de la carpeta ``outdir``. """
+        self.sort_all()
         for name in self.tablas.iterkeys():
             logging.info("Voy a procesar la tabla %s" % name)
             fname = os.path.join(outdir, '%s.xls' % name)
