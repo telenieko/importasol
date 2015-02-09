@@ -83,6 +83,8 @@ class CampoA(Campo):
 
     def get_valor(self, obj):
         val = super(CampoA, self).get_valor(obj)
+        if val and type(val) not in types.StringTypes:
+            val = str(val)
         if self.truncate and val:
             return val[:self.size]
         else:
