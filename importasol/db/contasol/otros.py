@@ -107,3 +107,51 @@ class PRO(SOLFile):
 
     __str__ = __unicode__
     __repr__ = __unicode__
+
+
+class CLI(SOLFile):
+    cA = CampoN("Codigo", size=5, required=True)
+    cB = CampoA("Nombre", size=100)
+    cC = CampoA("NIF", truncate=False, size=12)
+    cD = CampoA("Sigla del Domicilio", size=2)
+    cE = CampoA("Domicilio", size=100)
+    cF = CampoA("Numero de la calle", size=6)
+    cG = CampoN("Codigo Postal", size=5)
+    cH = CampoA("Poblacion", size=30)
+    cI = CampoA("Provincia", size=20)
+    cJ = CampoA("Telefono", truncate=False, size=15)
+    cK = CampoA("Fax", size=15, truncate=False)
+    cL = CampoA("Movil", size=15, truncate=False)
+    cM = CampoA("Banco", size=40, truncate=False)
+    cN = CampoA("Entidad", size=4, truncate=False)
+    cO = CampoA("Oficina", size=4, truncate=False)
+    cP = CampoA("DC", size=2, truncate=False)
+    cQ = CampoA("Cuenta", size=2, truncate=False)
+    cR = CampoA("Concepto Debe", size=40)
+    cS = CampoN("Tipo de operaciones", size=1)
+    cR = CampoA("Pais", size=3)
+    cU = CampoA("Persona de Contacto", size=50)
+    cV = CampoA("Email", size=50)
+    cW = CampoND("Porcen IVA", size=5)
+    cX = CampoND("Porcen Recargo", size=5)
+    cY = CampoCuenta("Cuenta Contrapartida 1", size=10)
+    cZ = CampoCuenta("Cuenta Contrapartida 2", size=10)
+    cAA = CampoCuenta("Cuenta Contrapartida 3", size=10)
+    cAB = CampoA("Mensaje Emergente", size=50)
+    cAF = CampoN("Tipo de retenciones", size=1)
+    cAG = CampoND("Porcen Retencion", size=5)
+    cAI = CampoA("IBAN", size=30)
+    cAK = CampoN("Identificacion Fiscal", size=1)
+    cAL = CampoN("Tipo de Impuesto", size=1)
+    cAM = CampoN("Clave de operacion habitual", size=2)
+    cAO = CampoN("Tipo de IVA predefinido", size=1)
+
+    class Meta:
+        tabla = 'CLI'
+
+    def __unicode__(self):
+        t = u"CLI(%s, %s)" % (self.cA, self.cB)
+        return t
+
+    __str__ = __unicode__
+    __repr__ = __unicode__
